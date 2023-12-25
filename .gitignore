@@ -1,0 +1,33 @@
+# Node modules
+node_modules/
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Environment variables
+.env
+
+# Compiled binary addons
+build/Release
+
+# Dependency directories
+jspm_packages/
+
+# User-specific files
+*.sublime-*
+*.suo
+*.user
+*.userosscache
+*.vscode/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Optional: OS-generated files
+.DS_Store
+Thumbs.db
