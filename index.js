@@ -86,7 +86,9 @@ app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
 
-// const inputData = ['1','2' , '26'  ];
+
+// ==== IGNORE THIS =====
+// const inputData = ['1','2' , '26'];
 //     const cppProcess = spawn(cppProgramPath, inputData);
 //     let retVal ;
 //     // Handle the standard output data

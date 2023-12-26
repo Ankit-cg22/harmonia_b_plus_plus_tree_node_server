@@ -870,7 +870,14 @@ int main(int argc, char *argv[])
     {
       cout << "Enter key to be searched" << endl;
       int ke = atoi(argv[3]);
-      search(ke);
+      if (node_count == 0)
+      {
+        cout << -1 << "\n";
+      }
+      else
+      {
+        search(ke);
+      }
     }
   }
 
