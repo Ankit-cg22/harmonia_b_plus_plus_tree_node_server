@@ -279,6 +279,7 @@ int insert_internal(node *nn, int ind, int key, int *dd, int orig) // insert key
       {
         nn2 = (node *)malloc(sizeof(node));
         init(nn2);
+        node_count++;
         middle_element = nn->key[mid - 1]; // mid-1 goes to top
         for (int j = 0; j < m; j++)
           dd_mid[j] = nn->data[mid - 1][j];
@@ -331,6 +332,7 @@ int insert_internal(node *nn, int ind, int key, int *dd, int orig) // insert key
 
         nn2 = (node *)malloc(sizeof(node));
         init(nn2);
+        node_count++;
 
         for (int i = mid; i < nk; i++)
         {
@@ -369,6 +371,8 @@ int insert_internal(node *nn, int ind, int key, int *dd, int orig) // insert key
       {
         nn2 = (node *)malloc(sizeof(node));
         init(nn2);
+        node_count++;
+
         middle_element = nn->key[mid - 1]; // mid-1 goes to top
         for (int j = 0; j < m; j++)
           dd_mid[j] = nn->data[mid - 1][j];
@@ -409,6 +413,7 @@ int insert_internal(node *nn, int ind, int key, int *dd, int orig) // insert key
             dd_mid[j] = dd[j];
           nn2 = (node *)malloc(sizeof(node));
           init(nn2);
+          node_count++;
 
           for (int i = mid; i < nk; i++)
           {
@@ -429,6 +434,7 @@ int insert_internal(node *nn, int ind, int key, int *dd, int orig) // insert key
             dd_mid[j] = nn->data[mid][j];
           nn2 = (node *)malloc(sizeof(node));
           init(nn2);
+          node_count++;
 
           for (int i = mid + 1; i < nk; i++)
           {
@@ -472,6 +478,8 @@ int insert_internal(node *nn, int ind, int key, int *dd, int orig) // insert key
         node *nn3;
         nn3 = (node *)malloc(sizeof(node));
         init(nn3);
+        node_count++;
+
         // cout<<"middle_element: "<<middle_element<<endl;
         put_in_middle(nn3, 0, middle_element, dd_mid);
         // cout<<"middle_element: "<<middle_element<<endl;
@@ -576,6 +584,8 @@ int insert_internal(node *nn, int ind, int key, int *dd, int orig) // insert key
         node *nn3;
         nn3 = (node *)malloc(sizeof(node));
         init(nn3);
+        node_count++;
+
         // cout<<"middle_element: "<<middle_element<<endl;
         put_in_middle(nn3, 0, middle_element, dd_mid);
         // cout<<"middle_element: "<<middle_element<<endl;
@@ -679,6 +689,8 @@ void insert(int *dd)
   {
     nn = (node *)malloc(sizeof(node));
     init(nn);
+    node_count++;
+
     nn->key[0] = key;
     for (int j = 0; j < m; j++)
     {
@@ -726,11 +738,11 @@ void insert(int *dd)
 }
 
 // Function template to save data to a file
-void saveNodeData(const std::string &filename, int nodeSize)
+void saveNodeData(const std::string &filename)
 {
   std::ofstream ofile;
   ofile.open(filename, std::ios::trunc);
-  for (int i = 0; i < nodeSize; i++)
+  for (int i = 0; i < node_count; i++)
   {
     if (nodes[i] != NULL)
     {
@@ -755,15 +767,14 @@ bool isFileEmpty(const std::string &filename)
 }
 
 // Function template to load data from a file
-void loadNodeData(const std::string &filename, int nodeSize)
+void loadNodeData(const std::string &filename)
 {
 
   if (isFileEmpty(filename))
     return;
   std::fstream ifile(filename, std::ios_base::in);
 
-  // cout << nodeSize << " <-- node size as seen by load node data function\n";
-  for (int i = 0; i < nodeSize; i++)
+  for (int i = 0; i < node_count; i++)
   {
     nodes[i] = (node *)malloc(sizeof(node));
     init(nodes[i]);
@@ -782,29 +793,44 @@ void loadNodeData(const std::string &filename, int nodeSize)
 }
 
 // Function to save a single int value to a file
-void saveInt(const std::string &filename, int value)
+void saveInt(const std::string &filename)
 {
   std::ofstream ofile;
   ofile.open(filename, std::ios::trunc);
-  ofile << value << endl;
+  ofile << node_count << endl;
 }
 
 // Function to load a single int value from a file
 int loadInt(const std::string &filename)
 {
+  if (isFileEmpty(filename))
+    return 0;
+
   std::fstream myfile(filename, std::ios_base::in);
   int a;
   myfile >> a;
   return a;
 }
 
+void loadPrefixArrayData(const std::string &filename)
+{
+  std::fstream ifile(filename, std::ios_base::in);
+  for (int i = 0; i < node_count; i++)
+  {
+    ifile >> prefix_sum[i];
+  }
+}
+
+void savePrefixArrayData(const std::string &filename)
+{
+  std::ofstream ofile;
+  ofile.open(filename, std::ios::trunc);
+  for (int i = 0; i < node_count; i++)
+    ofile << prefix_sum[i] << endl;
+}
+
 int main(int argc, char *argv[])
 {
-  int nodesSize = 1;
-
-  int prefixSize = loadInt("prefixSize.txt");
-
-  // prefix_sum = ;
 
   for (int i = 0; i < k1; i++)
   {
@@ -813,7 +839,9 @@ int main(int argc, char *argv[])
       prefix_sum[i] = MAX;
   }
 
-  loadNodeData("nodes.txt", nodesSize);
+  node_count = loadInt("node_count.txt");
+  loadNodeData("nodes.txt");
+  loadPrefixArrayData("prefix_sum.txt");
 
   int q = atoi(argv[1]);
   // cout << "Enter number of queries:- " << endl;
@@ -846,11 +874,9 @@ int main(int argc, char *argv[])
     }
   }
 
-  // saveInt("nodeSize.txt", nodesSize);
-  // saveInt("prefixSize.txt", prefixSize);
-  saveNodeData("nodes.txt", nodesSize); // Save Node** data
-  // loadData(filename, nodes, ssize);  // Load Node** data
-  // saveData("prefix_sum.txt", prefix_sum);
+  saveInt("node_count.txt");
+  saveNodeData("nodes.txt"); // Save Node** data
+  savePrefixArrayData("prefix_sum.txt");
 
   return 0;
 }

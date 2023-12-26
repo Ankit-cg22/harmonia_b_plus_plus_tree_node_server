@@ -85,3 +85,24 @@ app.post('/search', (req, res) => {
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
+
+// const inputData = ['1','2' , '26'  ];
+//     const cppProcess = spawn(cppProgramPath, inputData);
+//     let retVal ;
+//     // Handle the standard output data
+//     cppProcess.stdout.on('data', (data) => {
+//       console.log(`Output from C++ program: ${data.toString()}`);
+//       retVal = data.toString()
+//       console.log(retVal)
+//     });
+    
+//     // Handle errors
+//     cppProcess.stderr.on('data', (data) => {
+//       console.error(`Error from C++ program: ${data.toString()}`);
+//     });
+    
+//     // Handle the end of the process
+//     cppProcess.on('close', (code) => {
+//       console.log(`C++ program exited with code ${code}`);
+//       // res.json({ success: true, value: retVal });
+//     });
