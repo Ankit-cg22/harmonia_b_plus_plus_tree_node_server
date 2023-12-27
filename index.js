@@ -72,7 +72,7 @@ app.post('/search', (req, res) => {
     // Handle the end of the process
     cppProcess.on('close', (code) => {
       console.log(`C++ program exited with code ${code}`);
-      retVal = retVal.trim();
+      retVal = retVal?.trim();
       res.json({ success: true, value: retVal });
     });
   
