@@ -1,6 +1,7 @@
 const { spawn } = require('child_process');
 const express = require('express');
 const bodyParser = require('body-parser');
+const path = require('path');
 
 const app = express();
 const port = 3000; // You can use any port you prefer
@@ -9,7 +10,7 @@ const port = 3000; // You can use any port you prefer
 app.use(bodyParser.json());
 
 // Path to your C++ program
-const cppProgramPath = './harmonia_sequential_inserts.exe';
+const cppProgramPath = path.resolve(__dirname, 'harmonia_sequential_inserts.exe');;
 
 // Data to send to the C++ program
 // const inputData = '1 1 k v';
