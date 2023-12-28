@@ -73,7 +73,12 @@ app.post('/search', (req, res) => {
     cppProcess.on('close', (code) => {
       console.log(`C++ program exited with code ${code}`);
       retVal = retVal?.trim();
-      res.json({ success: true, value: retVal });
+      const data = { value: retVal };
+      console.log("retval")
+      console.log(retVal)
+      console.log("obj")
+      console.log(data)
+      res.json({ success: true, data: data });
     });
   
   } else {
