@@ -24,13 +24,14 @@ const cppProgramPath = path.resolve(__dirname, 'harmonia_sequential_inserts');
 app.post('/insert', (req, res) => {
   const { key, value } = req.body;
   const inputData = ['1','1' , key , value];
-
+  let retVal ;
   if (key && value) {
 
     const cppProcess = spawn(cppProgramPath, inputData);
 
     // Handle the standard output data
     cppProcess.stdout.on('data', (data) => {
+      retVal = data.toString()
       console.log(`Output from C++ program: ${data.toString()}`);
     });
     
@@ -42,9 +43,17 @@ app.post('/insert', (req, res) => {
     // Handle the end of the process
     cppProcess.on('close', (code) => {
       console.log(`C++ program exited with code ${code}`);
+      retVal = retVal?.trim();
+      const match = retVal.match(/Time taken: \d+/);
+      let timeTaken;
+      if (match) {
+       timeTaken = match[0].split(":")[1].trim();
+      }
+      const data = { message: 'Data inserted successfully', timeTakenInMicroSeconds : timeTaken };
+      res.json({ success: true, data: data });
+
     });
 
-      res.json({ success: true, message: 'Data inserted successfully' });
   } else {
       res.status(400).json({ success: false, message: 'Both key and value are required' });
   }
@@ -74,12 +83,15 @@ app.post('/search', (req, res) => {
     cppProcess.on('close', (code) => {
       console.log(`C++ program exited with code ${code}`);
       retVal = retVal?.trim();
-      const data = { value: retVal };
-      console.log("retval")
-      console.log(retVal)
-      console.log("obj")
-      console.log(data)
-      res.json({ success: true, data: data });
+      const match = retVal.match(/(-?\d+)\r?\nTime taken: (\d+)/);
+      let value523 ,timeTakenInMicroSeconds ;
+
+      if(match){
+        value = match[1];
+        timeTakenInMicroSeconds = match[2];
+      }
+  
+      res.json({ success: true, data: {value , timeTakenInMicroSeconds} });
     });
   
   } else {

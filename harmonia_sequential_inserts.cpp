@@ -831,6 +831,7 @@ void savePrefixArrayData(const std::string &filename)
 
 int main(int argc, char *argv[])
 {
+  auto start_time = std::chrono::high_resolution_clock::now();
 
   for (int i = 0; i < k1; i++)
   {
@@ -884,6 +885,11 @@ int main(int argc, char *argv[])
   saveInt("node_count.txt");
   saveNodeData("nodes.txt"); // Save Node** data
   savePrefixArrayData("prefix_sum.txt");
+
+  auto end_time = std::chrono::high_resolution_clock::now();
+  auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
+
+  std::cout << "Time taken: " << duration.count() << std::endl;
 
   return 0;
 }
