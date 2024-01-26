@@ -2,10 +2,11 @@ const { spawn } = require('child_process');
 const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
+const cors = require('cors');
 
 const app = express();
 const port = 3000; // You can use any port you prefer
-
+app.use(cors())
 // Use bodyParser middleware to parse JSON requests
 app.use(bodyParser.json());
 
