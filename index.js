@@ -13,14 +13,6 @@ app.use(bodyParser.json());
 // Path to your C++ program
 const cppProgramPath = path.resolve(__dirname, 'harmonia_sequential_inserts');
 
-// Data to send to the C++ program
-// const inputData = '1 1 k v';
-// const inputData = ['1','1' , '22' , '33']; // for running 1 command and in that command we insert a k,v pair
-// const inputData = ['1','2' , '25'];
-// 2 queries:
-// 1 , 23 , 24 : of type 1 , means to insert 23,24 pair
-// 2 , 23 :  search for key 23
-
 // Spawn the C++ program as a child process
 app.post('/insert', (req, res) => {
   const { key, value } = req.body;
