@@ -88,6 +88,9 @@ app.post('/search', (req, res) => {
     // Handle the end of the process
     cppProcess.on('close', (code) => {
       console.log(`C++ program exited with code ${code}`);
+      if(retVal.length < 52) {
+       return res.json({success :false , data : ["-1"]}) 
+      }
       const {value , timeTakenInMicroSeconds} = parseString(retVal)
       res.json({ success: true, data: {value , timeTakenInMicroSeconds} });
     });
