@@ -5,7 +5,7 @@ using namespace std;
 int k1 = 364;
 int k2 = 121;   // k1= 3^0+...+3^5 = 364= sizeof(nodes)
                 //  k2=364-3^5= sizeof(prefix_sum)
-int m = 2;      // 1 key + 4 data items
+int m = 51;     // 1 key + 4 data items
 int fanout = 6; // so, each node can have max 3 keys and 4 children
 int nk = fanout - 1;
 
@@ -108,9 +108,9 @@ int search(int key)
   if (key_arr[ind] == key)
   {
     int **dd = nodes[j]->data;
-    // for (int r = 0; r < m; r++)
-    //   cout << dd[ind][r] << " ";
-    cout << dd[ind][1] << "\n";
+    for (int r = 0; r < m; r++)
+      cout << dd[ind][r] << "\n";
+    // cout << dd[ind][1] << "\n";
     ok = true;
   }
   if (!ok)

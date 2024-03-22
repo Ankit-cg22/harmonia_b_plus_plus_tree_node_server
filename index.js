@@ -24,7 +24,7 @@ const cppProgramPath = path.resolve(__dirname, 'harmonia_sequential_inserts');
 // Spawn the C++ program as a child process
 app.post('/insert', (req, res) => {
   const { key, value } = req.body;
-  const inputData = ['1','1' , key , value];
+  const inputData = ['1','1' , key , ...value];
   let retVal ;
   if (key && value) {
 
@@ -60,9 +60,22 @@ app.post('/insert', (req, res) => {
   }
 });
 
+function parseString(inputString) {
+  // Split the input string by newline character
+  const lines = inputString.split('\n');
+
+  // Extract numeric values from the second line to the last but one and remove carriage return characters
+  const numericValues = lines.slice(1, 51).map(value => value.trim());
+
+  // Extract the value after "Time taken:" and remove carriage return characters
+  const timeTakenValue = lines[51].split(': ')[1].trim();
+
+  // Return an array containing the numeric values as strings and the time taken value
+  return { value: numericValues, timeTakenInMicroSeconds: timeTakenValue };
+}
+
 app.post('/search', (req, res) => {
   const {key} = req.body;
-  const inputData = ['1','1' ,key];
   
   if (key ) {
     const inputData = ['1','2' , key ];
@@ -83,15 +96,7 @@ app.post('/search', (req, res) => {
     // Handle the end of the process
     cppProcess.on('close', (code) => {
       console.log(`C++ program exited with code ${code}`);
-      retVal = retVal?.trim();
-      const match = retVal.match(/(-?\d+)\r?\nTime taken: (\d+)/);
-      let value523 ,timeTakenInMicroSeconds ;
-
-      if(match){
-        value = match[1];
-        timeTakenInMicroSeconds = match[2];
-      }
-  
+      const {value , timeTakenInMicroSeconds} = parseString(retVal)
       res.json({ success: true, data: {value , timeTakenInMicroSeconds} });
     });
   
@@ -105,25 +110,3 @@ app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
 
-
-// ==== IGNORE THIS =====
-// const inputData = ['1','2' , '26'];
-//     const cppProcess = spawn(cppProgramPath, inputData);
-//     let retVal ;
-//     // Handle the standard output data
-//     cppProcess.stdout.on('data', (data) => {
-//       console.log(`Output from C++ program: ${data.toString()}`);
-//       retVal = data.toString()
-//       console.log(retVal)
-//     });
-    
-//     // Handle errors
-//     cppProcess.stderr.on('data', (data) => {
-//       console.error(`Error from C++ program: ${data.toString()}`);
-//     });
-    
-//     // Handle the end of the process
-//     cppProcess.on('close', (code) => {
-//       console.log(`C++ program exited with code ${code}`);
-//       // res.json({ success: true, value: retVal });
-//     });
