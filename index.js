@@ -25,7 +25,7 @@ app.post('/insert', (req, res) => {
     // Handle the standard output data
     cppProcess.stdout.on('data', (data) => {
       retVal = data.toString()
-      console.log(`Output from C++ program: ${data.toString()}`);
+      // console.log(`Output from C++ program: ${data.toString()}`);
     });
     
     // Handle errors
@@ -57,10 +57,10 @@ function parseString(inputString) {
   const lines = inputString.split('\n');
 
   // Extract numeric values from the second line to the last but one and remove carriage return characters
-  const numericValues = lines.slice(1, 51).map(value => value.trim());
+  const numericValues = lines.slice(1, 101).map(value => value.trim());
 
   // Extract the value after "Time taken:" and remove carriage return characters
-  const timeTakenValue = lines[51].split(': ')[1].trim();
+  const timeTakenValue = lines[101].split(': ')[1].trim();
 
   // Return an array containing the numeric values as strings and the time taken value
   return { value: numericValues, timeTakenInMicroSeconds: timeTakenValue };
@@ -75,9 +75,9 @@ app.post('/search', (req, res) => {
     let retVal ;
     // Handle the standard output data
     cppProcess.stdout.on('data', (data) => {
-      console.log(`Output from C++ program: ${data.toString()}`);
+      // console.log(`Output from C++ program: ${data.toString()}`);
       retVal = data.toString()
-      console.log(retVal)
+      // console.log(retVal)
     });
     
     // Handle errors
@@ -88,7 +88,7 @@ app.post('/search', (req, res) => {
     // Handle the end of the process
     cppProcess.on('close', (code) => {
       console.log(`C++ program exited with code ${code}`);
-      if(retVal.length < 52) {
+      if(retVal.length < 102) {
        return res.json({success :false , data : ["-1"]}) 
       }
       const {value , timeTakenInMicroSeconds} = parseString(retVal)
