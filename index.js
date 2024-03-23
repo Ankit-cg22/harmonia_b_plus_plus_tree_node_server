@@ -5,15 +5,15 @@ const path = require('path');
 const cors = require('cors');
 
 const app = express();
-const port = 3000; // You can use any port you prefer
+const port = 3000; 
 app.use(cors())
-// Use bodyParser middleware to parse JSON requests
+// bodyParser middleware to parse JSON requests
 app.use(bodyParser.json());
 
-// Path to your C++ program
+// Path to the C++ program
 const cppProgramPath = path.resolve(__dirname, 'harmonia_sequential_inserts');
 
-// Spawn the C++ program as a child process
+// spawning the C++ program as a child process
 app.post('/insert', (req, res) => {
   const { key, value } = req.body;
   const inputData = ['1','1' , key , ...value];
@@ -22,18 +22,18 @@ app.post('/insert', (req, res) => {
 
     const cppProcess = spawn(cppProgramPath, inputData);
 
-    // Handle the standard output data
+    // handling the standard output data
     cppProcess.stdout.on('data', (data) => {
       retVal = data.toString()
       // console.log(`Output from C++ program: ${data.toString()}`);
     });
     
-    // Handle errors
+    // handling errors
     cppProcess.stderr.on('data', (data) => {
       console.error(`Error from C++ program: ${data.toString()}`);
     });
     
-    // Handle the end of the process
+    // handling the end of the process
     cppProcess.on('close', (code) => {
       console.log(`C++ program exited with code ${code}`);
       retVal = retVal?.trim();
@@ -53,16 +53,13 @@ app.post('/insert', (req, res) => {
 });
 
 function parseString(inputString) {
-  // Split the input string by newline character
   const lines = inputString.split('\n');
+  let n = lines.length
+  
+  const numericValues = lines.slice(1, n-2).map(value => value.trim());
 
-  // Extract numeric values from the second line to the last but one and remove carriage return characters
-  const numericValues = lines.slice(1, 101).map(value => value.trim());
+  const timeTakenValue = lines[n-2].split(': ')[1].trim();
 
-  // Extract the value after "Time taken:" and remove carriage return characters
-  const timeTakenValue = lines[101].split(': ')[1].trim();
-
-  // Return an array containing the numeric values as strings and the time taken value
   return { value: numericValues, timeTakenInMicroSeconds: timeTakenValue };
 }
 
@@ -73,26 +70,27 @@ app.post('/search', (req, res) => {
     const inputData = ['1','2' , key ];
     const cppProcess = spawn(cppProgramPath, inputData);
     let retVal ;
-    // Handle the standard output data
+    // handling the standard output data
     cppProcess.stdout.on('data', (data) => {
       // console.log(`Output from C++ program: ${data.toString()}`);
       retVal = data.toString()
       // console.log(retVal)
     });
     
-    // Handle errors
+    // handling errors
     cppProcess.stderr.on('data', (data) => {
       console.error(`Error from C++ program: ${data.toString()}`);
     });
     
-    // Handle the end of the process
+    // handling the end of the process
     cppProcess.on('close', (code) => {
       console.log(`C++ program exited with code ${code}`);
+      let success = true
       if(retVal.length < 102) {
-       return res.json({success :false , data : ["-1"]}) 
+       success = false
       }
       const {value , timeTakenInMicroSeconds} = parseString(retVal)
-      res.json({ success: true, data: {value , timeTakenInMicroSeconds} });
+      res.json({ success , data: {value , timeTakenInMicroSeconds} });
     });
   
   } else {
