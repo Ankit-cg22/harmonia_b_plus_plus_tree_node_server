@@ -679,6 +679,23 @@ int insert_internal(node *nn, int ind, int key, int *dd, int orig) // insert key
   }
 }
 
+void update(int *arr)
+{
+  int key = arr[0];
+  int j = search(key);
+  int *key_arr = nodes[j]->key;
+  int ind = lb(key_arr, nk, key);
+  bool ok = false;
+  if (key_arr[ind] == key)
+  {
+    int **dd = nodes[j]->data;
+    for (int r = 0; r < m; r++)
+      dd[ind][r] = arr[r];
+    ok = true;
+  }
+  cout << ok << "\n";
+}
+
 void insert(int *dd)
 {
   int key = dd[0];
@@ -867,7 +884,7 @@ int main(int argc, char *argv[])
       flag = false;
       insert(dd);
     }
-    else if (kk == 2)
+    else if (kk == 2) // search
     {
       cout << "Enter key to be searched" << endl;
       int ke = atoi(argv[3]);
@@ -879,6 +896,18 @@ int main(int argc, char *argv[])
       {
         search(ke);
       }
+    }
+    else if (kk == 3) // update
+    {
+      int dd[m];
+      cout << "Enter " << m << " elements of a tuple, of which 1st should be key:- " << endl;
+      for (int i = 0; i < m; i++)
+      {
+        dd[i] = atoi(argv[3 + i]);
+        // cout<<"i: "<<i<<endl;
+      }
+      flag = false;
+      update(dd);
     }
   }
 

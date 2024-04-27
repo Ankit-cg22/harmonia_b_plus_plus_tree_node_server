@@ -5,7 +5,7 @@ const path = require('path');
 const cors = require('cors');
 
 const app = express();
-const port = 3000; 
+const port = 3010; 
 app.use(cors())
 // bodyParser middleware to parse JSON requests
 app.use(bodyParser.json());
@@ -95,6 +95,52 @@ app.post('/search', (req, res) => {
   
   } else {
       res.status(404).json({ success: false, message: 'Key not found' });
+  }
+});
+
+app.post('/update', (req, res) => {
+  const { key, value } = req.body;
+  const inputData = ['1','3' , key , ...value];
+  let retVal ;
+  if (key && value) {
+
+    const cppProcess = spawn(cppProgramPath, inputData);
+
+    // handling the standard output data
+    cppProcess.stdout.on('data', (data) => {
+      retVal = data.toString()
+      // console.log(`Output from C++ program: ${data.toString()}`);
+    });
+    
+    // handling errors
+    cppProcess.stderr.on('data', (data) => {
+      console.error(`Error from C++ program: ${data.toString()}`);
+    });
+    
+    // handling the end of the process
+    cppProcess.on('close', (code) => {
+      console.log(`C++ program exited with code ${code}`);
+      let success = true;
+      if(retVal.length < 102){
+        success = false
+      }
+      retVal = retVal?.trim();
+      const match = retVal.match(/Time taken: \d+/);
+      
+      let timeTaken;
+      if (match) {
+       timeTaken = match[0].split(":")[1].trim();
+      }
+      if(success == false){
+        return res.status(400).json({success:false , data : {message:"Key does not exist in database." ,  timeTakenInMicroSeconds : timeTaken }})
+      }
+      const data = { message: 'Data updated successfully', timeTakenInMicroSeconds : timeTaken };
+      res.json({ success: true, data: data });
+
+    });
+
+  } else {
+      res.status(400).json({ success: false, message: 'Both key and value are required' });
   }
 });
 
